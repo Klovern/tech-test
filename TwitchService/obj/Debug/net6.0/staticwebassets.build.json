@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "zBB712derow9jgz36o/DOstjY0QNeDiYyECywXLfAek=",
+  "Source": "TwitchService",
+  "BasePath": "_content/TwitchService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
