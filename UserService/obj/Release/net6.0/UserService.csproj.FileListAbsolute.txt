@@ -89,3 +89,7 @@ C:\Users\s4d\Documents\tech-test\UserService\obj\Release\net6.0\refint\UserServi
 C:\Users\s4d\Documents\tech-test\UserService\obj\Release\net6.0\UserService.pdb
 C:\Users\s4d\Documents\tech-test\UserService\obj\Release\net6.0\UserService.genruntimeconfig.cache
 C:\Users\s4d\Documents\tech-test\UserService\obj\Release\net6.0\ref\UserService.dll
+C:\Users\s4d\Documents\tech-test\UserService\bin\Release\net6.0\AutoMapper.dll
+C:\Users\s4d\Documents\tech-test\UserService\bin\Release\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\s4d\Documents\tech-test\UserService\bin\Release\net6.0\RabbitMQ.Client.dll
+C:\Users\s4d\Documents\tech-test\UserService\bin\Release\net6.0\System.Threading.Channels.dll

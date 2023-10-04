@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Core.Repository
+﻿namespace Core.Repository
 {
     public interface ICreatable<T>
     {

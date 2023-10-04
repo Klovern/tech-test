@@ -1,5 +1,4 @@
-﻿using Core.Repository;
-using UserService.Objects;
+﻿using UserService.Objects;
 
 namespace UserService.Data
 {

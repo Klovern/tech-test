@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data;
+using UserService.DataServices;
 using UserService.Dtos;
 using UserService.Objects;
 
@@ -12,11 +13,13 @@ namespace UserService.Controllers
     {
         private readonly IUserRepo _repository;
         private readonly IMapper _mapper;
+        private readonly IUserServiceClient _userServiceClient;
 
-        public UserController(IUserRepo repository, IMapper mapper)
+        public UserController(IUserRepo repository, IMapper mapper, IUserServiceClient userServiceClient)
         {
             _repository = repository;
             _mapper = mapper;
+            _userServiceClient = userServiceClient;
         }
 
 
@@ -24,6 +27,14 @@ namespace UserService.Controllers
         [HttpGet]
         public ActionResult GetUserById(int id)
         {
+            try
+            {
+                _userServiceClient.PublishX("test xoxoxoxo");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
+            }
             return Ok(_mapper.Map<UserReadDto>(_repository.Details(id)));
         }
 
@@ -32,6 +43,7 @@ namespace UserService.Controllers
         public ActionResult Create(UserCreateDto userCreatedDto)
         {
             var userCreatedObject = _mapper.Map<User>(userCreatedDto);
+
             _repository.Create(userCreatedObject);
             _repository.Save();
 
