@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data;
 using UserService.DataServices;
@@ -14,12 +16,17 @@ namespace UserService.Controllers
         private readonly IUserRepo _repository;
         private readonly IMapper _mapper;
         private readonly IUserServiceClient _userServiceClient;
+        private readonly IValidator<UserCreateDto> _validator;
 
-        public UserController(IUserRepo repository, IMapper mapper, IUserServiceClient userServiceClient)
+        public UserController(IUserRepo repository
+            , IMapper mapper
+            , IUserServiceClient userServiceClient
+            , IValidator<UserCreateDto> validator)
         {
             _repository = repository;
             _mapper = mapper;
             _userServiceClient = userServiceClient;
+            _validator = validator;
         }
 
 

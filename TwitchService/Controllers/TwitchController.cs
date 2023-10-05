@@ -20,7 +20,7 @@ namespace TwitchService.Controllers
             return Ok("---> Alive");
         }
 
-        [Route("profile/{id}/{userName}")]
+        [Route("profile/{userName}")]
         [HttpGet]
         public async Task<ActionResult<TwitchUserRepresentation>> LinkTwitchUser(string userName)
         {

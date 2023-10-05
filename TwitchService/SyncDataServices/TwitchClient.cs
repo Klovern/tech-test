@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 
 namespace TwitchService.SyncDataServices
@@ -16,17 +15,26 @@ namespace TwitchService.SyncDataServices
         public async Task<TwitchUserRepresentation?> GetTwitchRepresentation(string userName)
         {
             Console.WriteLine($"--> BaseAddress: {_httpClient.BaseAddress.ToString() ?? "Empty"}");
-            var xddd = await _httpClient.GetAsync($"users?login={userName}");
 
-            if (xddd.StatusCode == HttpStatusCode.OK)
+            try
             {
-                var result = await xddd.Content.ReadAsStringAsync();            
-                return result != null ? JsonSerializer.Deserialize<RootTwitchUser>(result)?.data?.FirstOrDefault() : default;
+                var result = await _httpClient.GetAsync($"users?login={userName}");
+
+                if (result.StatusCode == HttpStatusCode.OK)
+                {
+                    var twitchUser = await result.Content.ReadAsStringAsync();
+                    return result != null ? JsonSerializer.Deserialize<RootTwitchUser>(twitchUser)?.data?.FirstOrDefault() : default;
+                }
             }
+            catch (Exception ex)
+            {
+              Console.WriteLine(ex.Message);
+            }
+      
             return default;
         }
 
-        public class TwitchUserRepresentation 
+        public record TwitchUserRepresentation 
         {
             public string id { get; set; }
             public string login { get; set; }
@@ -40,7 +48,7 @@ namespace TwitchService.SyncDataServices
             public DateTime created_at { get; set; }
         }
 
-        public class RootTwitchUser
+        public record RootTwitchUser
         {
             public List<TwitchUserRepresentation> data { get; set; }
         }
