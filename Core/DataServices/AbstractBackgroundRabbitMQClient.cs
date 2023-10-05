@@ -51,14 +51,15 @@ namespace Core.DataServices
 
             catch (Exception ex)
             {
-
                 Console.WriteLine($"--> AbstractRabbitMQClient threw an exception: {ex.Message}");
             }
         }
+
         public IConnection GetConnection()
         {
             return this._connection;
         }
+
         public string GetQueueName()
         {
             return this._queueName;
@@ -68,6 +69,7 @@ namespace Core.DataServices
         {
             return this._channel;
         }
+
         public IConfiguration GetConfiguration()
         {
             return this._configuration;
@@ -84,7 +86,6 @@ namespace Core.DataServices
 
             base.Dispose();
         }
-
         private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
             Console.WriteLine("--> RabbitMQ Connection Shutdown");
