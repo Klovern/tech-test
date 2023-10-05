@@ -6,8 +6,8 @@ namespace TwitchService.EventHandlers
     {
         public Task Consume(UserCreatedEvent eventToConsume, CancellationToken token)
         {
-            Console.WriteLine("Running EventHandler A stuff, good for Open Closed Principle");
-
+            Console.WriteLine("Running EventConsumerA A stuff, good for Open Closed Principle");
+            Thread.Sleep(1000);
             return Task.CompletedTask;
         }
     }

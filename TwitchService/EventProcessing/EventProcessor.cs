@@ -52,10 +52,33 @@ namespace TwitchService.EventProcessing
             using (var scope = _scopeFactory.CreateScope())
             {
                 var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<UserCreatedEvent>>();
+
+                //Non Paralell
                 foreach (var simpleConsumer in simpleConsumers)
                 {
-                    await simpleConsumer.Consume(published, cancellationToken); 
+                    await simpleConsumer.Consume(published, cancellationToken);
                 }
+
+                // Another way
+                List<Task> myTasks = new List<Task>();
+
+                foreach (var item in simpleConsumers)
+                {
+                    myTasks.Add(item.Consume(published, cancellationToken));
+                }
+
+                await Task.WhenAll(myTasks).ConfigureAwait(false);
+
+
+                // Run them in paralell
+                var options = new ParallelOptions() { MaxDegreeOfParallelism = 20 };
+                await Parallel.ForEachAsync(simpleConsumers, options, async (consumer, cancellationToken) =>
+                {
+                    var t = Task.Run(() => { consumer.Consume(published, cancellationToken); });
+
+                    await t;
+                });
+
             }
         }
     }
