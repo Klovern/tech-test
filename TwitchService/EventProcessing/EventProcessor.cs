@@ -41,10 +41,21 @@ namespace TwitchService.EventProcessing
 
         private async void RunEvents(UserCreatedEvent published, CancellationToken cancellationToken)
         {
+            // Run MediatR Consumers 
             using (var scope = _scopeFactory.CreateScope())
             {
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                 await mediator.Publish(published, cancellationToken);
+            }
+
+            // Run regular IoC consumers
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<UserCreatedEvent>>();
+                foreach (var simpleConsumer in simpleConsumers)
+                {
+                    await simpleConsumer.Consume(published, cancellationToken); 
+                }
             }
         }
     }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace TwitchService.EventHandlers
 {
-    public class UserCreatedRequestHandler : INotificationHandler<UserCreatedEvent>
+    public class MediatRConsumerA : INotificationHandler<UserCreatedEvent>
     {
         public Task Handle(UserCreatedEvent request, CancellationToken cancellationToken)
         {
