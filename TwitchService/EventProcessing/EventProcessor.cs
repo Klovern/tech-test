@@ -69,7 +69,6 @@ namespace TwitchService.EventProcessing
 
                 await Task.WhenAll(myTasks).ConfigureAwait(false);
 
-
                 // Run them in paralell
                 var options = new ParallelOptions() { MaxDegreeOfParallelism = 20 };
                 await Parallel.ForEachAsync(simpleConsumers, options, async (consumer, cancellationToken) =>
