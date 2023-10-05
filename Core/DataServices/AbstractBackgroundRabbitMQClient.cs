@@ -48,7 +48,6 @@ namespace Core.DataServices
                     exchange: exchange,
                     routingKey: routing ?? string.Empty);
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine($"--> AbstractRabbitMQClient threw an exception: {ex.Message}");
@@ -86,6 +85,7 @@ namespace Core.DataServices
 
             base.Dispose();
         }
+
         private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
             Console.WriteLine("--> RabbitMQ Connection Shutdown");
