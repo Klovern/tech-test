@@ -133,6 +133,7 @@ $RECYCLE.BIN/
 _NCrunch*
 
 bin
+FileContentIndex
 obj
 packages
 *.cache
