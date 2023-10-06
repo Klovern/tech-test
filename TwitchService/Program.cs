@@ -1,6 +1,5 @@
 using TwitchService.DataServices;
 using TwitchService.EventHandlers;
-using TwitchService.EventProcessing;
 using System.Reflection;
 using Core.Events;
 using Core.DependencyStuff;

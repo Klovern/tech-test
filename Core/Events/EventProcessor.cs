@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
-namespace Core.Events   
+namespace Core.Events
 {
     public abstract class EventProcessor<T> : IEventProcessor<T> where T : class, new()
     {
@@ -13,26 +13,36 @@ namespace Core.Events
             _scopeFactory = scopeFactory;
         }
 
-        public void ProcessEvent(string eventMessage, CancellationToken cancellationToken)
+        public Task ProcessEvent(string eventMessage, CancellationToken cancellationToken)
         {
             try
             {
                 var eventType = JsonSerializer.Deserialize<T>(eventMessage);
                 Console.WriteLine("---> Message passed in is a valid UserCreatedEvent");
 
-                if (eventType != null)
+                var result = Task.FromResult(RunEvents(eventType, cancellationToken));
+                if (result == null || !result.IsCompletedSuccessfully)
                 {
-                    RunEvents(eventType, cancellationToken);
+                    // Set CancellationToken to cancel
+                    var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    cancellationToken = cts.Token;
+                    cts.Cancel();
+
+                    return Task.FromResult(result);
                 }
+
+                return Task.FromResult(result);
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine("--> Could not determine the event");
                 Console.WriteLine($"--> Failed to process {ex.Message}");
+                return Task.FromException(ex);
             }
         }
 
-        private async void RunEvents(T published, CancellationToken cancellationToken)
+        private async Task RunEvents(T published, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -45,12 +55,17 @@ namespace Core.Events
                     await mediator.Publish(published, cancellationToken);
                 }
             }
-            
+
 
             // Run regular IoC consumers
             using (var scope = _scopeFactory.CreateScope())
             {
-                var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<T>> ();
+                var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<T>>();
+
+                if (!simpleConsumers.Any())
+                {
+                    return;
+                }
 
                 //Non parallel
                 foreach (var simpleConsumer in simpleConsumers)

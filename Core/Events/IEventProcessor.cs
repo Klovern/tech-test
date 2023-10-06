@@ -2,6 +2,6 @@
 {
     public interface IEventProcessor<T> where T : notnull
     {
-        void ProcessEvent(string eventMessage, CancellationToken cancellationToken);
+        Task ProcessEvent(string eventMessage, CancellationToken cancellationToken);
     }
 }
