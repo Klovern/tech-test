@@ -6,11 +6,11 @@ namespace Core.DependencyStuff
 {
     public static class AutoInjectEventProcessors
     {
-        public static IServiceCollection InjectEventProcessors(this IServiceCollection services, Assembly currentExecutingAssembly)
+        public static IServiceCollection InjectEventProcessors(this IServiceCollection services)
         {
             Console.WriteLine("--> Attempting to register EventProcessors<T>");
 
-            foreach (Type eventProcessor in currentExecutingAssembly.GetTypes().Where(IsSubclassOfProcessorGeneric))
+            foreach (Type eventProcessor in Assembly.GetCallingAssembly().GetTypes().Where(IsSubclassOfProcessorGeneric))
             {
                 var eventDefinition = eventProcessor.BaseType;
    

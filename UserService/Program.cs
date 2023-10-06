@@ -1,7 +1,10 @@
+using Core.DependencyStuff;
 using Core.Validation;
 using FluentValidation;
+using MediatR;
 using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using UserService.Data;
 using UserService.DataServices;
@@ -34,10 +37,11 @@ builder.Services.AddSingleton<IUserServiceClient, UserServiceClient>();
  */
 builder.Services.AddMediatR(config =>
 {
-    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    config.AddOpenRequestPreProcessor(typeof(ValidationProcessor<>));
+    config.RegisterMediatRCoreStuff();
+
 });
 
+builder.Services.Xd();
 
 /*
  * Fluent Validators

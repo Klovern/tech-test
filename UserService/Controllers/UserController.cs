@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using UserService.Data;
 using UserService.DataServices;
 using UserService.Dtos;
@@ -60,6 +61,7 @@ namespace UserService.Controllers
         [Route("")]
         public ActionResult Create(UserCreateDto userCreatedDto)
         {
+            _validator.ValidateAndThrow(userCreatedDto);
             var userCreatedObject = _mapper.Map<User>(userCreatedDto);
 
             _repository.Create(userCreatedObject);

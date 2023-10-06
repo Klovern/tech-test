@@ -7,7 +7,7 @@ using Core.DependencyStuff;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.InjectEventProcessors(Assembly.GetExecutingAssembly());
+builder.Services.InjectEventProcessors();
 builder.Services.AddHostedService<TwitchServiceClient>();
 builder.Services.AddScoped<IEventConsumer<UserCreatedEvent>, EventConsumerA>();
 builder.Services.AddScoped<IEventConsumer<UserCreatedEvent>, EventConsumerB>();
