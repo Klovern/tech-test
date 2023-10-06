@@ -38,6 +38,5 @@ namespace Core.DependencyStuff
             }
             return false;
         }
-
     }
 }
