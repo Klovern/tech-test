@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
-using System.Web.Http.Results;
 
 namespace Core.Validation
 {
@@ -25,14 +24,14 @@ namespace Core.Validation
                 context.Response.StatusCode = 400;
                 var validationFailureResponse = new ValidationFailureResponse
                 {
-                    Errors = ex.Errors.Select(x => new ValidationError() 
+                    Errors = ex.Errors.Select(x => new ValidationError()
                     {
                         Message = x.ErrorMessage,
-                        PropertyName = x.PropertyName 
+                        PropertyName = x.PropertyName
                     }).ToList()
                 };
 
-            await context.Response.WriteAsync(JsonSerializer.Serialize(validationFailureResponse));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(validationFailureResponse));
             }
         }
     }

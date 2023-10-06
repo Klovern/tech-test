@@ -1,4 +1,5 @@
 ﻿using Core.DataServices;
+using Core.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -11,17 +12,17 @@ namespace TwitchService.DataServices
 
         private readonly IModel _channel;
         private readonly IConnection _connection;
-        private readonly IEventProcessor _eventProcessor;
+        private readonly IEventProcessor<UserCreatedEvent> _eventProcessor;
         private readonly string _queueName;
 
-        public TwitchServiceClient(IConfiguration configuration, IEventProcessor eventProcessor) : base(configuration, "trigger", "fanout", string.Empty)
+        public TwitchServiceClient(IConfiguration configuration, IEventProcessor<UserCreatedEvent> eventProcessor) : base(configuration, "trigger", "fanout", string.Empty)
         {
             _channel = base.GetChannel();
             _connection = base.GetConnection();
             _queueName = base.GetQueueName();
 
             _eventProcessor = eventProcessor;
-            Console.WriteLine("--> Listenting on the Message Bus...");
+            Console.WriteLine("--> Listening on the Message Bus...");
         }
 
 
@@ -38,7 +39,7 @@ namespace TwitchService.DataServices
                 var body = ea.Body;
                 var notificationMessage = Encoding.UTF8.GetString(body.ToArray());
 
-                _eventProcessor.ProcessEvent(notificationMessage);
+                _eventProcessor.ProcessEvent(notificationMessage, stoppingToken);
             };
 
             _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);

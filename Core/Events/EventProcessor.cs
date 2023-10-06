@@ -1,12 +1,11 @@
-﻿using Core.Events;
-using MediatR;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
-namespace TwitchService.EventProcessing
+namespace Core.Events   
 {
-    public class EventProcessor : IEventProcessor
+    public abstract class EventProcessor<T> : IEventProcessor<T> where T : class, new()
     {
-
         private readonly IServiceScopeFactory _scopeFactory;
 
         public EventProcessor(IServiceScopeFactory scopeFactory)
@@ -14,46 +13,46 @@ namespace TwitchService.EventProcessing
             _scopeFactory = scopeFactory;
         }
 
-        public void ProcessEvent(string message)
+        public void ProcessEvent(string eventMessage, CancellationToken cancellationToken)
         {
-            DetermineEvent(message);
-        }
-
-        private void DetermineEvent(string notifcationMessage)
-        {
-            Console.WriteLine("--> Determining Event");
-
             try
             {
-                var eventType = JsonSerializer.Deserialize<UserCreatedEvent>(notifcationMessage);
+                var eventType = JsonSerializer.Deserialize<T>(eventMessage);
                 Console.WriteLine("---> Message passed in is a valid UserCreatedEvent");
 
                 if (eventType != null)
                 {
-                    RunEvents(eventType, new CancellationToken());
+                    RunEvents(eventType, cancellationToken);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("---> Maybe this is wrong way of doing it");
+                Console.WriteLine("--> Could not determine the event");
+                Console.WriteLine($"--> Failed to process {ex.Message}");
             }
         }
 
-        private async void RunEvents(UserCreatedEvent published, CancellationToken cancellationToken)
+        private async void RunEvents(T published, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             // Run MediatR Consumers 
-            using (var scope = _scopeFactory.CreateScope())
+            if (typeof(T).IsAssignableFrom(typeof(INotification)))
             {
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                await mediator.Publish(published, cancellationToken);
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    await mediator.Publish(published, cancellationToken);
+                }
             }
+            
 
             // Run regular IoC consumers
             using (var scope = _scopeFactory.CreateScope())
             {
-                var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<UserCreatedEvent>>();
+                var simpleConsumers = scope.ServiceProvider.GetServices<IEventConsumer<T>> ();
 
-                //Non Paralell
+                //Non parallel
                 foreach (var simpleConsumer in simpleConsumers)
                 {
                     await simpleConsumer.Consume(published, cancellationToken);
@@ -69,9 +68,8 @@ namespace TwitchService.EventProcessing
 
                 await Task.WhenAll(myTasks).ConfigureAwait(false);
 
-                // Run them in paralell
-                var options = new ParallelOptions() { MaxDegreeOfParallelism = 20 };
-                await Parallel.ForEachAsync(simpleConsumers, options, async (consumer, cancellationToken) =>
+                // Run them in parallel
+                await Parallel.ForEachAsync(simpleConsumers, async (consumer, cancellationToken) =>
                 {
                     var t = Task.Run(() => { consumer.Consume(published, cancellationToken); });
 

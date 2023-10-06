@@ -30,9 +30,9 @@ namespace UserService.Controllers
         }
 
 
-        [Route("{id}", Name = "GetUserById")]
-        [HttpGet]
-        public ActionResult GetUserById(int id)
+        [HttpPost]
+        [Route("publish")]
+        public ActionResult Publish()
         {
             try
             {
@@ -40,8 +40,19 @@ namespace UserService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
+                Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+                return BadRequest(ex.Message);
             }
+
+            return Ok();
+        }
+
+
+        [Route("{id}", Name = "GetUserById")]
+        [HttpGet]
+        public ActionResult GetUserById(int id)
+        {
+        
             return Ok(_mapper.Map<UserReadDto>(_repository.Details(id)));
         }
 

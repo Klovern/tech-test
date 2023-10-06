@@ -10,7 +10,6 @@ namespace TwitchService.EventHandlers
             cancellationToken.ThrowIfCancellationRequested();
 
             Console.WriteLine("--> Im doing handler A");
-
             return Task.CompletedTask;
         }
     }

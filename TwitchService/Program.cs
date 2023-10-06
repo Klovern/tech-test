@@ -3,11 +3,12 @@ using TwitchService.EventHandlers;
 using TwitchService.EventProcessing;
 using System.Reflection;
 using Core.Events;
+using Core.DependencyStuff;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+builder.Services.InjectEventProcessors(Assembly.GetExecutingAssembly());
 builder.Services.AddHostedService<TwitchServiceClient>();
 builder.Services.AddScoped<IEventConsumer<UserCreatedEvent>, EventConsumerA>();
 builder.Services.AddScoped<IEventConsumer<UserCreatedEvent>, EventConsumerB>();

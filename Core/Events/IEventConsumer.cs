@@ -2,6 +2,6 @@
 {
     public interface IEventConsumer<T>
     {
-        Task Consume(T eventToConsume, CancellationToken token);
+        Task Consume(T eventToConsume, CancellationToken cancellationToken);
     }
 }

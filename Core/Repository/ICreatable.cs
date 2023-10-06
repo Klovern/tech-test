@@ -2,7 +2,7 @@
 {
     public interface ICreatable<T>
     {
-        public void Create(T entity);    
+        public void Create(T entity);
     }
 
     public interface IUpdatable<T>
@@ -21,7 +21,7 @@
     }
 
     public interface ICruddable<T> : IDetailsable<T>, ICreatable<T>, IUpdatable<T>, IDeletable, IExistable
-    { 
+    {
     }
 
     public interface IExistable

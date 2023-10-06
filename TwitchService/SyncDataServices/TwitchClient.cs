@@ -14,7 +14,7 @@ namespace TwitchService.SyncDataServices
 
         public async Task<TwitchUserRepresentation?> GetTwitchRepresentation(string userName)
         {
-            Console.WriteLine($"--> BaseAddress: {_httpClient.BaseAddress.ToString() ?? "Empty"}");
+            Console.WriteLine($"--> BaseAddress: {_httpClient?.BaseAddress?.ToString() ?? "Empty"}");
 
             try
             {
